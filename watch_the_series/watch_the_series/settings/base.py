@@ -1,4 +1,15 @@
+# -*- coding: utf-8 -*-
 # Django settings for watch_the_series project.
+
+import os, sys
+from os.path import join, dirname, abspath, normpath
+
+PROJECT_NAME = "watch_the_series"
+
+ROOT_PROJECT_INTERNAL = normpath(join(dirname(abspath(__file__)), ".."))
+ROOT_ABSOLUTE = normpath(join(ROOT_PROJECT_INTERNAL, "..", ".."))
+
+sys.path.append(ROOT_ABSOLUTE) # così si può trovare core e deebate
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -108,8 +119,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'series',
+    'south',
+    'django_extensions',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
