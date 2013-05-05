@@ -4,9 +4,13 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('watch_the_series.views',
+urlpatterns = patterns('series.views',
     # Examples:
-     #url(r'^$', 'home', name='home'),
+     url(r'^$', 'home', name='home'),
+     url(r'^login/$', 'login_view', name='login_view'),
+     url(r'^search/$', 'search', name='search'),
+     url(r'^create/(?P<thetvdb_id>\d+)/$', 'create', name='create'),
+     url(r'^serial/(?P<slug>[^/]+)/$', 'serial', name='serial'),
     # url(r'^watch_the_series/', include('watch_the_series.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

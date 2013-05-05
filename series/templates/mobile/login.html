@@ -1,0 +1,20 @@
+{% extends 'mobile/base.html' %}
+
+
+{% block '_content' %}
+    {% if wrong %}
+        <p>Error</p>
+    {% endif %}
+    <form action="" method="POST">
+        {% csrf_token %} 
+    <div data-role="fieldcontain" class="ui-hide-label">
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" value="{{ request.POST.email }}" placeholder="Email"/>
+    </div>
+    <div data-role="fieldcontain" class="ui-hide-label">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" value="{{ request.POST.password }}" placeholder="Password"/>
+    </div>
+    <input type="submit" value="Login" />
+    </form>
+{% endblock %}

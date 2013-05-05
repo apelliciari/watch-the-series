@@ -127,7 +127,14 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
 AUTH_USER_MODEL = 'series.User'
+
+AUTHENTICATION_BACKENDS = (
+    'series.auth.EmailBackend',
+    )
+
+LOGIN_URL = 'login_view'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -157,3 +164,11 @@ LOGGING = {
         },
     }
 }
+
+SITE_LAYOUT = "mobile"
+
+THETVDB_API_KEY = '9EF4EADB3E9DADB1'
+THETVDB_ACCOUNT_ID = 'E20A279E85DAFFF1'
+
+
+

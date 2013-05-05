@@ -4,3 +4,6 @@ South
 django-extensions
 ipython
 ipdb
+requests
+lxml # da copiare a mano da site-packages una volta installato sul global
+pyquery

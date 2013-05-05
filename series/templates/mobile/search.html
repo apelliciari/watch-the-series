@@ -1,0 +1,15 @@
+{% extends 'mobile/base.html' %}
+
+{% block '_content' %}
+
+<h2> Bentornato, {{ user.full_name }} </h2>
+<h3>Risultati di ricerca</h3>
+<ul data-role="listview" data-filter="true" data-theme="g">
+    {% for id, name in results.iteritems %}
+    <li><a href="{% url 'create' thetvdb_id=id %}">{{ name }}</a></li>
+    {% empty %}
+    <li>Nessun risultato per '{{ request.GET.search }}'</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
