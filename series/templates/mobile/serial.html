@@ -1,0 +1,23 @@
+{% extends 'mobile/base.html' %}
+
+{% block '_content' %}
+
+<h2> Community </h2>
+
+Devi guardare la puntata x
+
+La sto guardando! Probabilmente non la finirò
+
+Lista stagioni
+
+<ul data-role="listview" data-filter="true" data-theme="g">
+    {% for season in serial.seasons.all %}
+    <li>Stagione {{ season.number }} ( {{ season.episode_number }})</li>
+    {% empty %}
+        <li>Questa serie non ha stagioni! Strano eh</li>
+    {% endfor %}
+</ul>
+
+Voglio aggiornare le stagioni che ho visto
+
+{% endblock %}

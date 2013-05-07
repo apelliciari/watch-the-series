@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 
 import requests
 import xml.etree.ElementTree as ET
@@ -42,7 +43,6 @@ def search(request):
     results = OrderedDict()
 
     for xmlserial in root.findall('Series'):
-        print xmlserial.find('SeriesName').text
         results[xmlserial.find('seriesid').text] = xmlserial.find('SeriesName').text
 
     return render(request, "{0}/{1}.html".format(settings.SITE_LAYOUT, "search"), locals())
@@ -53,14 +53,35 @@ def create(request, thetvdb_id):
     serial = get_or_none(Serial, thetvdb_id=thetvdb_id)
 
     if serial:
-        return # redirect
+        return redirect(reverse('serial', kwargs={'slug': serial.slug})) # redirect
 
     # creazione
 
     response = requests.get('http://thetvdb.com/api/{settings.THETVDB_API_KEY}/series/{thetvdb_id}/all/en.xml'.format(settings=settings, thetvdb_id=thetvdb_id))
     root = ET.fromstring(response.content)
 
-    import ipdb; ipdb.set_trace()
+    serial = Serial.objects.create(
+            name=root.find('.//Series/SeriesName').text,
+            imdb_id=root.find('.//Series/IMDB_ID').text,
+            thetvdb_id=root.find('.//Series/id').text,
+            thetvdb_last_updated=root.find('.//Series/lastupdated').text,
+            )
+
+    seasons = []
+
+    for episode in root.findall('Episode'):
+
+        try:
+            seasons[int(float(episode.find('Combined_season').text))] = int(float(episode.find('Combined_episodenumber').text))
+        except IndexError:
+            seasons.append(int(float(episode.find('Combined_episodenumber').text)))
+
+    for idx, val in enumerate(seasons):
+        Season.objects.create(
+                serial=serial,
+                number=idx,
+                episode_number=val,
+                )
 
     return render(request, "{0}/{1}.html".format(settings.SITE_LAYOUT, "search"), locals())
 

@@ -36,9 +36,9 @@ class Serial(models.Model):
     name = models.CharField(max_length=255, blank=False)
     description = models.CharField(max_length=500, blank=True, null=True)
     slug = models.SlugField(max_length=255, blank=False)
-    wikipedia_url = models.CharField(max_length=255, blank=True)
     imdb_id = models.CharField(max_length=255, blank=True)
     thetvdb_id = models.IntegerField(null=True)
+    thetvdb_last_updated = models.IntegerField(null=True)
     created = CreationDateTimeField(null=True, blank=True)
     modified = ModificationDateTimeField(null=True, blank=True)
     objects = QuerySetManager()
@@ -57,17 +57,14 @@ class Serial(models.Model):
         #return reverse('tag', args=[self.parametro])
 
     def save(self, *args, **kwargs):
-        super(Serial, self).save(*args, **kwargs)
         if not self.slug:
-            self.slug = "{slug}-{this.id}".format(slug=slugify(self.slug), this=self)
-            self.save(*args, **kwargs)
+            self.slug = "{slug}-{this.id}".format(slug=slugify(self.name), this=self)
 
+        super(Serial, self).save(*args, **kwargs)
 
 class Season(models.Model):
     number = models.IntegerField(null=False, blank=False)
     serial = models.ForeignKey(Serial, related_name="seasons")
-    wikipedia_url = models.CharField(max_length=255, blank=True)
-    imdb_url = models.CharField(max_length=255, blank=True)
     episode_number = models.IntegerField()
     thetvdb_id = models.IntegerField(null=True)
     created = CreationDateTimeField(null=True, blank=True)
@@ -87,11 +84,11 @@ class Season(models.Model):
     #def url(self):
         #return reverse('tag', args=[self.parametro])
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.slug)
+    #def save(self, *args, **kwargs):
+        #if not self.slug:
+            #self.slug = slugify(self.slug)
 
-        super(Serial, self).save(*args, **kwargs)
+        #super(Serial, self).save(*args, **kwargs)
 
 class UserManager(BaseUserManager):
     def create_user(self, email, full_name, password=None):
