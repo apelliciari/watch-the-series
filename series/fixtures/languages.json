@@ -1,0 +1,22 @@
+[
+{
+  "pk": 1, 
+  "model": "series.language", 
+  "fields": {
+    "iso": "IT", 
+    "name": "Italian", 
+    "modified": "2013-05-09T15:06:01.716Z", 
+    "created": "2013-05-09T15:06:01.714Z"
+  }
+},
+{
+  "pk": 2, 
+  "model": "series.language", 
+  "fields": {
+    "iso": "EN", 
+    "name": "English", 
+    "modified": "2013-05-09T15:06:40.908Z", 
+    "created": "2013-05-09T15:06:40.908Z"
+  }
+}
+]

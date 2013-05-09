@@ -31,6 +31,22 @@ class QuerySetManager(models.Manager):
     def __getattr__(self, attr, *args):
         return getattr(self.get_query_set(), attr, *args)
 
+class Language(models.Model):
+    name = models.CharField(max_length=255, blank=False)
+    iso = models.CharField(max_length=10, blank=True, null=True)
+    created = CreationDateTimeField(null=True, blank=True)
+    modified = ModificationDateTimeField(null=True, blank=True)
+    objects = QuerySetManager()
+
+    class QuerySet(QuerySet):
+        pass
+
+    class Meta:
+        db_table = u'language'
+        verbose_name_plural = u'languages'
+
+    def __unicode__(self):
+        return self.name
 
 class Serial(models.Model):
     name = models.CharField(max_length=255, blank=False)
@@ -136,7 +152,8 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     created = CreationDateTimeField(null=True, blank=True)
     modified = ModificationDateTimeField(null=True, blank=True)
-    medaglie = models.ManyToManyField('Season', through='UserSeason')
+    seasons = models.ManyToManyField('Season', through='UserSeason')
+    serials = models.ManyToManyField('Serial', through='UserSerial')
 
     objects = UserManager()
 
@@ -168,6 +185,20 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+
+class UserSerial(models.Model):
+
+    user = models.ForeignKey(User, related_name = "xserials")
+    serial = models.ForeignKey(Serial, related_name = "xusers")
+    language = models.ForeignKey(Language)
+    completed = models.BooleanField(default=False)
+    created = CreationDateTimeField(null=True, blank=True)
+    modified = ModificationDateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = u'user_serial'
+        verbose_name_plural = u'users_series'
+
 class UserSeason(models.Model):
     user = models.ForeignKey(User, related_name = "xseasons")
     season = models.ForeignKey(Season, related_name = "xusers")
@@ -180,3 +211,4 @@ class UserSeason(models.Model):
     class Meta:
         db_table = u'user_season'
         verbose_name_plural = u'users_seasons'
+

@@ -4,9 +4,16 @@
 
 <h2> Community </h2>
 
+{% if serial not in request.user.serials.all %}
+<p>Non hai mai visto questa serie.</p>
+<a href="#" data-rel="dialog" data-role="button">Inizio ora la prima puntata!</a>
+{% else %}
+
 Devi guardare la puntata x
 
 La sto guardando! Probabilmente non la finirò
+
+{% endif %}
 
 Lista stagioni
 
@@ -18,6 +25,15 @@ Lista stagioni
     {% endfor %}
 </ul>
 
-Voglio aggiornare le stagioni che ho visto
+<a href="#" data-role="button">Inizio ora la prima puntata!</a>
 
 {% endblock %}
+
+
+{# dialog #}
+<div data-role="page" id="watching">
+  <div data-role="content">
+
+    <p>Page content goes here.</p>
+  </div>
+</div>
