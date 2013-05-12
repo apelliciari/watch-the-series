@@ -88,6 +88,29 @@ def create(request, thetvdb_id):
 def serial(request, slug):
 
     serial = get_object_or_404(Serial, slug=slug)
+
+    if serial in request.user.serials.all():
+        user_serial = request.user.x_serials.get(serial=serial)
+
     return render(request, "{0}/{1}.html".format(settings.SITE_LAYOUT, "serial"), locals())
 
+def watch(request, serial_id, episode, season_number):
 
+    serial = get_object_or_404(Serial, id=serial_id)
+
+    user_serial_qs = request.user.x_serials.filter(serial=serial)
+
+    user_serial, created = UserSerial.objects.get_or_create(
+        user=request.user, serial=serial,
+        defaults={
+            'language': Language.objects.get(iso="IT"),
+            'completed': False,
+            'current_season': serial.seasons.get(number=1),
+            'last_episode_seen': 0,
+            })
+
+    #if not user_serial.completed:
+
+
+
+    return redirect('serial', slug=serial.slug)# Redirect to a success page.

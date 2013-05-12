@@ -11,6 +11,7 @@ urlpatterns = patterns('series.views',
      url(r'^search/$', 'search', name='search'),
      url(r'^create/(?P<thetvdb_id>\d+)/$', 'create', name='create'),
      url(r'^serial/(?P<slug>[^/]+)/$', 'serial', name='serial'),
+     url(r'^watch/(?P<serial_id>\d+)/(?P<episode>\d+)/(?P<season_number>\d+)/$', 'watch', name='watch'),
     # url(r'^watch_the_series/', include('watch_the_series.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

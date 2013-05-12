@@ -78,6 +78,18 @@ class Serial(models.Model):
 
         super(Serial, self).save(*args, **kwargs)
 
+    def next_season(self, current_season_number):
+        return get_or_none(Season, number=current_season_number+1)
+
+    def episode_exists(self, episode, season_number):
+        season = get_or_none(Season, number=season_number)
+
+        if season:
+            if episode <= season.episode_number:
+                return True
+
+        return False
+
 class Season(models.Model):
     number = models.IntegerField(null=False, blank=False)
     serial = models.ForeignKey(Serial, related_name="seasons")
@@ -152,7 +164,6 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     created = CreationDateTimeField(null=True, blank=True)
     modified = ModificationDateTimeField(null=True, blank=True)
-    seasons = models.ManyToManyField('Season', through='UserSeason')
     serials = models.ManyToManyField('Serial', through='UserSerial')
 
     objects = UserManager()
@@ -188,10 +199,13 @@ class User(AbstractBaseUser):
 
 class UserSerial(models.Model):
 
-    user = models.ForeignKey(User, related_name = "xserials")
-    serial = models.ForeignKey(Serial, related_name = "xusers")
+    user = models.ForeignKey(User, related_name = "x_serials")
+    serial = models.ForeignKey(Serial, related_name = "x_users")
     language = models.ForeignKey(Language)
     completed = models.BooleanField(default=False)
+    current_season = models.ForeignKey(Season, related_name = "x_user_serials", null=True)
+    last_episode_seen = models.IntegerField(null=True)
+    last_episode_unfinished = models.BooleanField(default=False)
     created = CreationDateTimeField(null=True, blank=True)
     modified = ModificationDateTimeField(null=True, blank=True)
 
@@ -199,16 +213,23 @@ class UserSerial(models.Model):
         db_table = u'user_serial'
         verbose_name_plural = u'users_series'
 
-class UserSeason(models.Model):
-    user = models.ForeignKey(User, related_name = "xseasons")
-    season = models.ForeignKey(Season, related_name = "xusers")
-    last_episode_seen = models.IntegerField(null=True)
-    last_episode_unfinished = models.BooleanField(default=False)
-    season_completed = models.BooleanField(default=False)
-    created = CreationDateTimeField(null=True, blank=True)
-    modified = ModificationDateTimeField(null=True, blank=True)
+    def next_episode(self):
+        if not serial.next_season(current_season.number):
+            return None
 
-    class Meta:
-        db_table = u'user_season'
-        verbose_name_plural = u'users_seasons'
+        if self.last_episode_seen >= self.current_season.episode_number:
+            return 1
 
+    def next_episode_season(self):
+        if not serial.next_season(current_season.number):
+            return None
+        else:
+            return serial.next_season(current_season.number)
+
+    def watch_next_episode(self, unfinished=False):
+
+        if not self.completed:
+            self.last_episode_seen = self.next_episode
+            self.current_season = Season.objects.get(number=self.next_episode_season())
+
+        self.save()
