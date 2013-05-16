@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.db import transaction
 
 import requests
 import xml.etree.ElementTree as ET
@@ -94,6 +95,7 @@ def serial(request, slug):
 
     return render(request, "{0}/{1}.html".format(settings.SITE_LAYOUT, "serial"), locals())
 
+@transaction.commit_on_success
 def watch(request, serial_id, episode, season_number):
 
     serial = get_object_or_404(Serial, id=serial_id)
@@ -109,8 +111,6 @@ def watch(request, serial_id, episode, season_number):
             'last_episode_seen': 0,
             })
 
-    #if not user_serial.completed:
-
-
+    user_serial.watch_next_episode()
 
     return redirect('serial', slug=serial.slug)# Redirect to a success page.

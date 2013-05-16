@@ -4,7 +4,7 @@
 
 <h2> Bentornato, {{ user.full_name }} </h2>
 
-<a href="index.html" data-role="button">Non so cosa guardare</a> 
+<a href="index.html" data-role="button">Non so cosa guardare</a>
 
 <form action="{% url 'search' %}" method="GET">
         <label for="search">Cerca una serie:</label>
@@ -19,9 +19,6 @@
     {% empty %}
         <li>Non stai guardando serie al momento.</li>
     {% endfor %}
-	<li><a href="acura.html">Acura</a></li>
-	<li><a href="audi.html">Audi</a></li>
-	<li><a href="bmw.html">BMW</a></li>
 </ul>
 
 {% endblock %}

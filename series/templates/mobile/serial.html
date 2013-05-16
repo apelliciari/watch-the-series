@@ -6,11 +6,11 @@
 
 {% if serial not in request.user.serials.all %}
 <p>Non hai mai visto questa serie.</p>
-<a href="#" data-rel="dialog" data-role="button">Inizio ora la prima puntata!</a>
+<a href="{% url 'watch' serial_id=serial.id episode=1 season_number=1 %}" data-role="button">Inizio ora la prima puntata!</a>
 {% else %}
-<p>Devi guardare la puntata {{ user_serial.next_episode }} (stagione {{ user_serial.next_episode_season.number }})</p>
+<p>Devi guardare la puntata {{ user_serial.next_episode.number }} (stagione {{ user_serial.next_episode.season.number }})</p>
+<a href="{% url 'watch' serial_id=serial.id episode=user_serial.next_episode.number season_number=user_serial.next_episode.season.number %}" data-role="button">La sto guardando!</a>
 
-Devi guardare la puntata x
 
 La sto guardando! Probabilmente non la finirò
 

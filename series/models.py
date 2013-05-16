@@ -31,6 +31,12 @@ class QuerySetManager(models.Manager):
     def __getattr__(self, attr, *args):
         return getattr(self.get_query_set(), attr, *args)
 
+class Episode(object):
+    def __init__(self, number, season):
+        self.number = number
+        self.season = season
+
+
 class Language(models.Model):
     name = models.CharField(max_length=255, blank=False)
     iso = models.CharField(max_length=10, blank=True, null=True)
@@ -73,10 +79,13 @@ class Serial(models.Model):
         #return reverse('tag', args=[self.parametro])
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = "{slug}-{this.id}".format(slug=slugify(self.name), this=self)
 
         super(Serial, self).save(*args, **kwargs)
+
+        if not self.slug:
+            self.slug = "{slug}-{this.id}".format(slug=slugify(self.name), this=self)
+            self.save()
+
 
     def next_season(self, current_season_number):
         return get_or_none(Season, number=current_season_number+1)
@@ -214,22 +223,23 @@ class UserSerial(models.Model):
         verbose_name_plural = u'users_series'
 
     def next_episode(self):
-        if not serial.next_season(current_season.number):
+        if not self.next_season():
             return None
 
         if self.last_episode_seen >= self.current_season.episode_number:
-            return 1
+            return Episode(1, self.next_season()) # nuova season
 
-    def next_episode_season(self):
-        if not serial.next_season(current_season.number):
-            return None
-        else:
-            return serial.next_season(current_season.number)
+        return Episode(self.last_episode_seen+1, self.current_season)
+
+
+    def next_season(self):
+        return self.serial.next_season(self.current_season.number) # potrebbe ritornare None
 
     def watch_next_episode(self, unfinished=False):
 
         if not self.completed:
-            self.last_episode_seen = self.next_episode
-            self.current_season = Season.objects.get(number=self.next_episode_season())
+            episode = self.next_episode()
+            self.last_episode_seen = episode.number
+            self.current_season = episode.season
 
-        self.save()
+            self.save()

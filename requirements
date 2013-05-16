@@ -5,5 +5,5 @@ django-extensions
 ipython
 ipdb
 requests
-lxml # da copiare a mano da site-packages una volta installato sul global
-pyquery
+# lxml # easy_install lxml # da copiare a mano da site-packages una volta installato sul global
+# MySQL-Python # easy_install MySQL-Python in virtualenv
